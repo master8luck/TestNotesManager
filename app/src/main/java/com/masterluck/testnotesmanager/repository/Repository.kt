@@ -1,15 +1,21 @@
 package com.masterluck.testnotesmanager.repository
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import com.masterluck.testnotesmanager.database.NotesDao
 import com.masterluck.testnotesmanager.database.NotesDatabase
 import com.masterluck.testnotesmanager.model.Note
-import java.util.*
+import com.masterluck.testnotesmanager.utils.Utils
+import dagger.hilt.android.qualifiers.ApplicationContext
+import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class Repository @Inject constructor(private val database: NotesDatabase) {
+class Repository @Inject constructor(
+    private val database: NotesDatabase,
+    @ApplicationContext private val context: Context,
+) {
 
     private val dao: NotesDao
         get() = database.notesDao
@@ -22,14 +28,28 @@ class Repository @Inject constructor(private val database: NotesDatabase) {
         dao.insert(note)
     }
 
-    private fun generateNotes() {
-        mutableListOf(
-            Note(1, "qwe", "asd", 123),
-            Note(2, "rthw", "trhhrthw4b65uygv35", 432),
-            Note(3, "vwbrt", "hv35hb3h5  h35b3 ", 6572363),
-        ).forEach {
-            it.time = Calendar.getInstance().time.time
-            dao.insert(it)
+    fun generateNotes(): Single<Boolean> {
+
+        return Single.fromCallable {
+            Thread.sleep(5000)
+            if (!Utils.isNetworkAvailable(context)) {
+                false
+            }
+            else {
+                mutableListOf(
+                    Note(1, "Read 100 books", "optional - in 1 year", 98912624563),
+                    Note(2, "make something\n\n\nor not..", "", 299945433332),
+                    Note(
+                        3,
+                        "go walk",
+                        "very long desc\nwith\nsome\ndummy\ndata\n\nhere",
+                        9996572363
+                    ),
+                ).forEach {
+                    dao.insert(it)
+                }
+                true
+            }
         }
     }
 

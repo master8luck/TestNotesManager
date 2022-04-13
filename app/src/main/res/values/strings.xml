@@ -3,4 +3,6 @@
     <string name="save">Сохранить</string>
     <string name="enter_title">Введите заголовок</string>
     <string name="enter_description">Введите описание</string>
+    <string name="no_data">Нет данных</string>
+    <string name="no_internet">Нет интернета</string>
 </resources>
